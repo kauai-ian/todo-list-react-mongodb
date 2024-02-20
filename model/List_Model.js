@@ -7,8 +7,9 @@ const listSchema = new Schema({
     type: String,
     required: true,
   },
-
-  activeListId: String,
+  todos: {
+    type: Array,
+  },
 });
 
 const List = model("ListSchema", listSchema);

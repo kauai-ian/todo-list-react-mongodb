@@ -1,0 +1,189 @@
+:root {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+  display: flex;
+  justify-content: center;
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  padding: 1rem;
+  color: #646cff;
+  height: 52px;
+  width: 52px;
+}
+
+button:hover {
+  border-color: #646cff;
+  color: #646cff;
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto;
+}
+
+.btn-del {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.btn-del:hover {
+  border-color: rgb(134, 5, 5);
+  color: #ffa564;
+}
+
+.container {
+  display: flex;
+  gap: 5rem;
+  width: 80vw;
+}
+
+.list-container {
+  flex: 1;
+  padding: 20px;
+}
+
+.todo-container {
+  flex: 2;
+  padding: 20px;
+}
+
+form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+form input {
+  font-size: 1.2rem;
+}
+
+li {
+  list-style: none;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #535bf2;
+  padding: 3px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+li label {
+  font-size: 1.2rem;
+  flex: 1;
+}
+
+.checked {
+  text-decoration: line-through;
+  color: rgb(58, 56, 56);
+}
+
+.active {
+  background-color: #ffa564;
+}
+
+p {
+  margin-left: 10px;
+}
+
+ul {
+  text-decoration: none;
+  padding: 0;
+}
+
+.todo-container label {
+  display: flex;
+  gap: 1rem;
+}
+
+.todo-container li {
+  background-color: #488f2c7b;
+}
+
+#listItem,
+#item {
+  padding: 10px;
+  width: 95%;
+  margin-left: 0;
+  background-color: #b0afaf;
+  color: rgb(5, 5, 5);
+  border-radius: 8px;
+  border: none;
+}
+
+.form-row {
+  margin: 1rem;
+  flex: 1;
+  margin-left: 0;
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+.clearCompleted {
+  width: auto;
+}
+
+.trash {
+  width: 24px;
+}
+
+.list-container li:first-child .btn-del {
+  display: none;
+}
+
+img {
+  filter: invert(1);
+}
+
+footer {
+  padding: 20px;
+}
+
+.footerContainer a {
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+}
+
+.footerContainer img {
+  height: 42px;
+  /* justify-content: center; */
+}
