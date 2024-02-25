@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const { Schema, model } = mongoose;
 
-const listSchema = new Schema({
+const ProjectSchema = new Schema({
   title: {
     type: String,
     required: true,
@@ -10,8 +10,11 @@ const listSchema = new Schema({
   todos: {
     type: Array,
   },
+  _id: {
+    type: mongoose.Schema.Types.ObjectId,
+  },
   
 });
 
-const List = model("ListSchema", listSchema);
-export default List;
+const Project = model("Project", ProjectSchema);
+export default Project;

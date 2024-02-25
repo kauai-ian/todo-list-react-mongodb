@@ -10,7 +10,9 @@ import cors from "cors";
 const connectUrl = process.env.DB_URI;
 // console.log(process.env.DB_URI);
 // import TodoModel from "./model/Todo_Model.js";
+
 import List from "./model/List_Model.js";
+import Project from "./model/Projects.js";
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -31,9 +33,10 @@ async function main() {
 }
 
 // create new list
-// const _listModel = new List({
-//   title: 'New List',
-//   activeListId: '',
+// const _listModel = new Project({
+//   title: 'inbox',
+//   activeListId: '1',
+// _id: 1,
 // })
 
 // save the model
@@ -54,7 +57,7 @@ async function main() {
 // get all lists
 app.get("/lists", async (req, res) => {
   try {
-    const lists = await List.find();
+    const lists = await Project.find();
     res.json(lists);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -63,12 +66,11 @@ app.get("/lists", async (req, res) => {
 
 // create new list
 app.post("/lists", async (req, res) => {
-  const list = new List({
-    title: req.body.title,
-    activeListId: req.body.activeListId,
-  });
-
   try {
+    const list = new Project({
+      title: req.body.title,
+      // activeListId: req.body.activeListId,
+    });
     const newList = await list.save();
     res.status(201).json(newList);
   } catch (err) {
@@ -77,10 +79,10 @@ app.post("/lists", async (req, res) => {
 });
 
 // delete todo
-app.delete("/list/:id", async (req, res) => {
+app.delete("/lists/:_id", async (req, res) => {
   try {
-    const list = await List.findById(req.params.id);
-    if (list == null) {
+    const list = await Project.findByIdAndDelete(req.params._id);
+    if (!list) {
       return res.status(404).json({ message: "List not found" });
     }
     await list.remove();

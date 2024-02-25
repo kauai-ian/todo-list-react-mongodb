@@ -1,14 +1,14 @@
 import trashIcon from "../assets/trash.png";
 import { PropTypes } from "prop-types";
 
-export function ListItem({ title, id, deleteList, switchLists, activeListId }) {
+export function ListItem({ title, _id, deleteList, switchLists, activeListId }) {
   const capFrstLtr = (str) => {
     return str.charAt(0).toUpperCase() + str.slice(1);
   };
 
   const handleDeleteList = () => {
-    if (id !== "1") {
-      deleteList(id);
+    if (_id !== "1") {
+      deleteList(_id);
     } else {
       console.log("Cannot delete inbox");
       return;
@@ -16,11 +16,11 @@ export function ListItem({ title, id, deleteList, switchLists, activeListId }) {
   };
 
 
-  const isActive = activeListId === id
+  const isActive = activeListId === _id
 
 
   return (
-    <li onClick={() => switchLists(id)} className={isActive ? "active" : ''} >
+    <li onClick={() => switchLists(_id)} className={isActive ? "active" : ''} >
       <p className="list item" type="text" >
         {capFrstLtr(title)}
       </p>
@@ -34,7 +34,7 @@ export function ListItem({ title, id, deleteList, switchLists, activeListId }) {
 
 ListItem.propTypes = {
   title: PropTypes.string,
-  id: PropTypes.string,
+  _id: PropTypes.string,
   switchLists: PropTypes.func.isRequired,
   deleteList: PropTypes.func.isRequired,
   activeListId: PropTypes.string,

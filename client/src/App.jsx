@@ -3,15 +3,14 @@ import { TodoForm } from "./components/NewTodoForm";
 import { TodoList } from "./components/TodoList";
 import { List } from "./components/List";
 import { ListForm } from "./components/NewListForm";
-import axios from 'axios'
-
-// added code for displaying lists, adding lists. 
-// couldnt get the ID to work witht the database. 
+import axios from "axios";
 
 
+// added code for displaying lists, adding lists.
+// couldnt get the active list id to work witht the database.
+// need to work on errors
 
-const API_Lists = 'http://localhost:3000/lists'
-
+const API_Lists = "http://localhost:3000/lists";
 
 function App() {
   const [activeListId, setActiveListId] = useState("1");
@@ -23,44 +22,59 @@ function App() {
     fetchLists();
   }, []);
 
-  // working but not rendering the inbox. So need to push that to the db first? 
   const fetchLists = async () => {
     try {
-      const res = await axios.get(API_Lists,{
+      const res = await axios.get(API_Lists, {
         headers: {
           "Content-Type": "application/json",
-          mode: "no-cors"
-        }
-        })
-      setLists(res.data)
-    } catch (error) {
-      console.error('Error fetching lists', error)
+        },
+      });
+      // Check if the list with title inbox already exists
+    const defaultListExists = res.data.some(list => list.title === "Inbox");
+// default list added to database
+      if (!defaultListExists) {
+        await axios.post(API_Lists, { _id: "1", title: "Inbox", todos: [] })
+        const updatedRes = await axios.get(API_Lists, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+      })
+      setLists(updatedRes.data);
+    } else {
+      setLists(res.data); 
     }
-  }
+    } catch (error) {
+      console.error("Error fetching lists", error);
+    }
+  };
 
-  //not working. 400 error. The title is now a string but how do I get it into the list. 
   const addList = async (listObject) => {
-    const title = listObject.title
+    const title = listObject.title;
     try {
       console.log(title);
-      const res = await axios.post(API_Lists, { title })
-      
-    setLists([...lists, res.data]); 
-    // if (!activeListId) {
-    //   setActiveListId(lists.id);
-    // } 
-  }catch (error) {
-      console.error('Error adding list', error)
+      const res = await axios.post(API_Lists, { title });
+
+      setLists([...lists, res.data]);
+      if (!activeListId) {
+        setActiveListId("1");
+      }
+    } catch (error) {
+      console.error("Error adding list", error);
     }
-  }
+  };
 
-
-  const deleteList = (id) => {
-    setLists((currentLists) => {
-      return currentLists.filter((list) => list.id !== id);
-    });
-    if (activeListId === id) {
-      setActiveListId("1");
+  // needs work
+  const deleteList = async (_id) => {
+    try {
+      await axios.delete(`/${API_Lists}/${_id}`, _id);
+      setLists((currentLists) => {
+        return currentLists.filter((list) => list._id !== _id); 
+      });
+      if (activeListId === _id) {
+        setActiveListId('');
+      }
+    } catch (error) {
+      console.error("Error deleting list", error); 
     }
   };
 
