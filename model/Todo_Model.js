@@ -7,15 +7,14 @@ const todoSchema = new Schema({
     type: String,
     required: true,
   },
-  id: {
-    type: String,
-    required: true,
-  },
   completed: {
     type: Boolean,
     default: false,
   },
+  _id: {
+    type: String,
+  },
 });
 
-const TodoSchema = model("TodoSchema", todoSchema);
-export default TodoSchema;
+const Todo = model("Todo", todoSchema);
+export default Todo;

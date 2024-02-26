@@ -8,7 +8,7 @@ export function ListItem({ title, _id, deleteList, switchLists, activeListId }) 
 
   const handleDeleteList = () => {
     if (_id !== "1") {
-      deleteList(_id);
+      deleteList(_id.toString()); // convert to string before passing it to deleteList
     } else {
       console.log("Cannot delete inbox");
       return;

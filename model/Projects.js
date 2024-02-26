@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import Todo from "./Todo_Model.js";
 
 const { Schema, model } = mongoose;
 
@@ -7,13 +8,10 @@ const ProjectSchema = new Schema({
     type: String,
     required: true,
   },
-  todos: {
-    type: Array,
-  },
+  todos: [Todo.schema],
   _id: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: String,
   },
-  
 });
 
 const Project = model("Project", ProjectSchema);

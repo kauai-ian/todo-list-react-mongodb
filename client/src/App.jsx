@@ -4,7 +4,7 @@ import { TodoList } from "./components/TodoList";
 import { List } from "./components/List";
 import { ListForm } from "./components/NewListForm";
 import axios from "axios";
-
+import { v4 as uuidv4 } from "uuid";
 
 // added code for displaying lists, adding lists.
 // couldnt get the active list id to work witht the database.
@@ -15,7 +15,6 @@ const API_Lists = "http://localhost:3000/lists";
 function App() {
   const [activeListId, setActiveListId] = useState("1");
   const [lists, setLists] = useState([]);
-  console.log(lists);
 
   // side effect to update list
   useEffect(() => {
@@ -30,19 +29,19 @@ function App() {
         },
       });
       // Check if the list with title inbox already exists
-    const defaultListExists = res.data.some(list => list.title === "Inbox");
-// default list added to database
+      const defaultListExists = res.data.some((list) => list._id === "1");
+      // default list added to database
       if (!defaultListExists) {
-        await axios.post(API_Lists, { _id: "1", title: "Inbox", todos: [] })
+        await axios.post(API_Lists, { _id: "1", title: "Inbox", todos: [] });
         const updatedRes = await axios.get(API_Lists, {
           headers: {
             "Content-Type": "application/json",
           },
-      })
-      setLists(updatedRes.data);
-    } else {
-      setLists(res.data); 
-    }
+        });
+        setLists(updatedRes.data);
+      } else {
+        setLists(res.data);
+      }
     } catch (error) {
       console.error("Error fetching lists", error);
     }
@@ -50,9 +49,9 @@ function App() {
 
   const addList = async (listObject) => {
     const title = listObject.title;
+
     try {
-      console.log(title);
-      const res = await axios.post(API_Lists, { title });
+      const res = await axios.post(API_Lists, { title, _id: Date.now() });
 
       setLists([...lists, res.data]);
       if (!activeListId) {
@@ -63,38 +62,46 @@ function App() {
     }
   };
 
-  // needs work
   const deleteList = async (_id) => {
     try {
-      await axios.delete(`/${API_Lists}/${_id}`, _id);
+      await axios.delete(`${API_Lists}/${_id}`);
       setLists((currentLists) => {
-        return currentLists.filter((list) => list._id !== _id); 
+        return currentLists.filter((list) => list._id !== _id);
       });
-      if (activeListId === _id) {
-        setActiveListId('');
-      }
+      setActiveListId("1");
     } catch (error) {
-      console.error("Error deleting list", error); 
+      console.error("Error deleting list", error);
     }
   };
 
-  const activeList = lists.find((list) => list.id === activeListId);
+  const activeList = lists.find((list) => list._id === activeListId);
 
   const switchLists = (id) => {
     setActiveListId(id);
   };
 
-  const addTodo = (newTodo) => {
-    setLists((prevLists) => {
-      return prevLists.map((list) => {
-        return list.id === activeListId
-          ? {
-              ...list,
-              todos: [...list.todos, newTodo],
-            }
-          : list;
+  const addTodo = async (newTodo) => {
+    try {
+      const res = await axios.post(`${API_Lists}/${activeListId}/todos`, {
+        ...newTodo,
+        id: uuidv4(),
       });
-    });
+
+      console.log(res.data)
+
+      setLists((prevLists) => {
+        return prevLists.map((list) => {
+          return list._id === activeListId
+            ? {
+                ...list,
+                todos: [...list.todos, res.data], // the response from server is the updated list
+              }
+            : list;
+        });
+      });
+    } catch (error) {
+      console.error("Error adding todo", error);
+    }
   };
 
   const toggleCompleted = (id, completed) => {

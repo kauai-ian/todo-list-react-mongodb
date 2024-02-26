@@ -11,8 +11,8 @@ const connectUrl = process.env.DB_URI;
 // console.log(process.env.DB_URI);
 // import TodoModel from "./model/Todo_Model.js";
 
-import List from "./model/List_Model.js";
 import Project from "./model/Projects.js";
+import Todo from "./model/Todo_Model.js";
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -69,6 +69,7 @@ app.post("/lists", async (req, res) => {
   try {
     const list = new Project({
       title: req.body.title,
+      _id: req.body._id,
       // activeListId: req.body.activeListId,
     });
     const newList = await list.save();
@@ -78,15 +79,39 @@ app.post("/lists", async (req, res) => {
   }
 });
 
-// delete todo
+// delete list
 app.delete("/lists/:_id", async (req, res) => {
   try {
-    const list = await Project.findByIdAndDelete(req.params._id);
+    const listId = req.params._id; // Extract the list ID from the request parameters
+    console.log("List ID to be deleted:", listId); // Log the list id
+
+    const list = await Project.findByIdAndDelete(listId);
     if (!list) {
       return res.status(404).json({ message: "List not found" });
     }
-    await list.remove();
     res.json({ message: "List deleted" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+//add todo
+app.post("/lists/:_id/todos", async (req, res) => {
+  try {
+    const listId = req.params._id;
+    console.log("List ID to be updated:", listId);
+    const {title, id } = req.body
+
+    const todo = new Todo({ title, _id: id });
+
+    const list = await Project.findByIdAndUpdate(
+      listId,
+      { $push: { todos: todo } },
+      { new: true }
+    );
+
+    const newTodo = list.todos.find((t) => t._id == todo._id)
+    res.status(201).json(newTodo);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
