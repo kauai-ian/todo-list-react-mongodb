@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const { Schema, model } = mongoose;
 
-const todoSchema = new Schema({
+const TodoSchema = new Schema({
   title: {
     type: String,
     required: true,
@@ -11,10 +11,10 @@ const todoSchema = new Schema({
     type: Boolean,
     default: false,
   },
-  _id: {
+  todo_id: {
     type: String,
   },
 });
 
-const Todo = model("Todo", todoSchema);
+const Todo = model("Todo", TodoSchema);
 export default Todo;

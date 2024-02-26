@@ -16,11 +16,11 @@ export function TodoList({ activeList, todos, deleteTodo, addTodo, toggleComplet
       {todos && todos.length > 0 && (
         <ul>
           {todos.map((todo) => {
-            if (todo && todo._id) {
+            if (todo && todo.todo_id) {
             return (
               <TodoItem
                 {...todo}
-                key={todo._id}
+                key={todo.todo_id}
                 deleteTodo={deleteTodo}
                 addTodo={addTodo}
                 toggleCompleted={toggleCompleted}
@@ -43,7 +43,7 @@ TodoList.propTypes = {
   todos: PropTypes.arrayOf(
     PropTypes.shape({
       title: PropTypes.string.isRequired,
-      _id: PropTypes.string.isRequired,
+      todo_id: PropTypes.string.isRequired,
       completed: PropTypes.bool.isRequired,
     })
   ),

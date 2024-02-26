@@ -1,17 +1,16 @@
 import mongoose from "mongoose";
+import Todo from "./Todo_Model.js";
 
 const { Schema, model } = mongoose;
 
-const listSchema = new Schema({
+const ListSchema = new Schema({
   title: {
     type: String,
     required: true,
   },
-  todos: {
-    type: Array,
-  },
-  
+
+  todos: [Todo.schema],
 });
 
-const List = model("ListSchema", listSchema);
+const List = model("List", ListSchema);
 export default List;
