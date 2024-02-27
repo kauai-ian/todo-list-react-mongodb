@@ -7,7 +7,7 @@ Attempted a simple todo list using React.
 - The checked items can all be cleared from the list using the clear completed button.
 - Individual lists and todo items can be removed using the delete button (trash can icon).
 - Upon page refresh, the lists and todo items are still there due to connection to MongoDB on the backend.
-- The default list of Inbox cannot be deleted. All new todos default to inbox unless another list is actively selected.
+
 
 Tech Stack: MongoDB, Express, React, Node.js
 

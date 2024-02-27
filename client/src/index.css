@@ -165,9 +165,9 @@ ul {
   width: 24px;
 }
 
-.list-container li:first-child .btn-del {
+/* .list-container li:first-child .btn-del {
   display: none;
-}
+} */
 
 img {
   filter: invert(1);

@@ -1,3 +1,5 @@
+//client
+
 import { useState, useEffect } from "react";
 import { TodoForm } from "./components/NewTodoForm";
 import { TodoList } from "./components/TodoList";
@@ -64,9 +66,11 @@ function App() {
   const addTodo = async (newTodo) => {
     try {
       const { title } = newTodo;
-      const todo_id = uuidv4();
-      const todoData = { title, todo_id }; // Construct the todo data object
+      const _id = uuidv4();
+      const todoData = { title, _id }; // Construct the todo data object
       console.log(todoData);
+      console.log("Type of activeListId:", typeof activeListId);
+      console.log(activeListId);
 
       const res = await axios.post(
         `${API_Lists}/${activeListId}/todos`,
@@ -91,19 +95,26 @@ function App() {
   };
 
   // needs work
-  const toggleCompleted = (id, completed) => {
-    setLists((currentLists) => {
-      return currentLists.map((list) => {
-        return list.id === activeListId
-          ? {
-              ...list,
-              todos: list.todos.map((todo) => {
-                return todo.id === id ? { ...todo, completed } : todo;
-              }),
-            }
-          : list;
+  const toggleCompleted = async (todo_id, completed) => {
+    try {
+      await axios.put(`${API_Lists}/${activeListId}/todos/${todo_id}`, {
+        completed,
       });
-    });
+      setLists((currentLists) => {
+        return currentLists.map((list) => {
+          return list._id === activeListId
+            ? {
+                ...list,
+                todos: list.todos.map((todo) => {
+                  return todo._id === todo_id ? { ...todo, completed } : todo;
+                }),
+              }
+            : list;
+        });
+      });
+    } catch (error) {
+      console.error("Error toggling todo", error);
+    }
   };
 
   const deleteTodo = async (todo_id) => {
@@ -115,7 +126,7 @@ function App() {
           return list._id === activeListId
             ? {
                 ...list,
-                todos: list.todos.filter((todo) => todo.todo_id !== todo_id),
+                todos: list.todos.filter((todo) => todo._id !== todo_id),
               }
             : list;
         });
@@ -125,23 +136,31 @@ function App() {
     }
   };
 
-  const clearCompletedTodos = () => {
-    if (activeList && activeList.todos) {
-      const incompleteTodos = activeList.todos.filter(
-        (todo) => !todo.completed
+  const clearCompletedTodos = async () => {
+    try {
+      if (!activeList) return;
+
+      const completeTodosIds = activeList.todos // create an array of completed todos
+        .filter((todo) => todo.completed)
+        .map((todo) => todo._id);
+
+      await Promise.all(
+        completeTodosIds.map(async (todoId) => {
+          await axios.delete(`${API_Lists}/${activeListId}/todos/${todoId}`);
+        })
       );
+
       setLists((prevLists) => {
         return prevLists.map((list) => {
-          return list.id === activeListId
-            ? { ...list, todos: incompleteTodos }
+          return list._id === activeListId
+            ? { ...list, todos: list.todos.filter((todo) => !todo.completed) }
             : list;
         });
       });
+    } catch (error) {
+      console.error("Error clearing completed todos", error);
     }
   };
-
-  // console.log(lists);
-  // console.log(activeListId);
 
   return (
     <div>

@@ -13,7 +13,7 @@ export function ListItem({
   };
 
   const handleDeleteList = () => {
-    deleteList(_id.toString()); // convert to string before passing it to deleteList
+    deleteList(_id); // convert to string before passing it to deleteList
   };
 
   const isActive = activeListId === _id;

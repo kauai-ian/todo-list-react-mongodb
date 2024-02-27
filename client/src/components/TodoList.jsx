@@ -5,7 +5,7 @@ export function TodoList({ activeList, todos, deleteTodo, addTodo, toggleComplet
   
   
   // console.log(activeList)
-  // console.log("todos:", todos)
+  console.log("todos:", todos)
   
   return (
     <>
@@ -16,11 +16,11 @@ export function TodoList({ activeList, todos, deleteTodo, addTodo, toggleComplet
       {todos && todos.length > 0 && (
         <ul>
           {todos.map((todo) => {
-            if (todo && todo.todo_id) {
+            if (todo && todo._id) {
             return (
               <TodoItem
                 {...todo}
-                key={todo.todo_id}
+                key={todo._id}
                 deleteTodo={deleteTodo}
                 addTodo={addTodo}
                 toggleCompleted={toggleCompleted}
@@ -43,7 +43,7 @@ TodoList.propTypes = {
   todos: PropTypes.arrayOf(
     PropTypes.shape({
       title: PropTypes.string.isRequired,
-      todo_id: PropTypes.string.isRequired,
+      _id: PropTypes.string.isRequired,
       completed: PropTypes.bool.isRequired,
     })
   ),

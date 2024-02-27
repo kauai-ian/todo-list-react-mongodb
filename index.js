@@ -68,7 +68,7 @@ app.get("/lists", async (req, res) => {
 app.post("/lists", async (req, res) => {
   try {
     const list = new List({
-      title: req.body.title
+      title: req.body.title,
     });
     const newList = await list.save();
     res.status(201).json(newList);
@@ -97,20 +97,25 @@ app.delete("/lists/:list_id", async (req, res) => {
 app.post("/lists/:list_id/todos", async (req, res) => {
   try {
     console.log(req.params);
-    const listId = req.params._id;
-    console.log("List ID to be updated:", _id);
-    const { title, todoId } = req.body;
+    const listId = req.params.list_id;
+    console.log("List ID to be updated:", listId);
+    const { title } = req.body;
     console.log(req.body);
-    const todo = new Todo({ title, todo_id: todoId });
+    const todo = new Todo({ title, todo_id: Date.now() });
 
-    const list = await List.findByIdAndUpdate(
-      listId,
-      { $push: { todos: todo } },
-      { new: true }
-    );
+    const list = await List.findById(listId);
 
-    const newTodo = list.todos.find((t) => t.todo_id == todo.todo_id);
+    if (!list) {
+      return res.status(404).json({ message: "list not found" });
+    }
+
+    list.todos.push(todo);
+
+    await list.save();
+
+    const newTodo = list.todos.find((t) => t.todo_id === todo.todo_id);
     res.status(201).json(newTodo);
+    console.log("success");
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -121,21 +126,85 @@ app.delete("/lists/:list_id/todos/:todo_id", async (req, res) => {
   try {
     console.log("Request Parameters:", req.params);
 
-    const listId = req.params._id;
+    const listId = req.params.list_id;
     const todoId = req.params.todo_id;
-    console.log("List ID to be deleted:", listId);
+    console.log("List ID of item to be deleted:", listId);
     console.log("Todo ID to be deleted:", todoId);
 
-    const list = await List.findByIdAndDelete(
-      listId,
-      { $pull: { todos: { todo_id: todoId } } },
-      { new: true }
-    );
-
+    const list = await List.findById(listId);
     if (!list) {
       return res.status(404).json({ message: "List not found" });
     }
-    res.json({ message: "Todo deleted" });
+    const todoItem = list.todos.id(todoId);
+
+    if (!todoItem) {
+      return res.status(404).json({ message: "todo not found" });
+    }
+
+    todoItem.deleteOne();
+
+    await list.save();
+
+    res.status(204).send();
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+//update todo completed status
+app.put("/lists/:list_id/todos/:todo_id", async (req, res) => {
+  try {
+    const listId = req.params.list_id;
+    const todoId = req.params.todo_id;
+    const { completed } = req.body;
+
+    const list = await List.findById(listId);
+
+    if (!list) {
+      return res.status(404).json({ message: "list not found" });
+    }
+
+    const todoItem = list.todos.id(todoId);
+
+    if (!todoItem) {
+      return res.status(404).json({ message: "todo not found" });
+    }
+
+    todoItem.completed = completed;
+
+    await list.save();
+
+    res.json({ message: "Todo updated" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// clear completed
+app.delete("/lists/:list_id/todos/:todo_id", async (req, res) => {
+  try {
+    console.log("Request Parameters:", req.params);
+
+    const listId = req.params.list_id;
+    console.log("List ID of item to be deleted:", listId);
+
+    const list = await List.findById(listId);
+    console.log("List:", list);
+    if (!list) {
+      return res.status(404).json({ message: "List not found" });
+    }
+
+    // filter out completed todos and extract their ids
+    const completedTodoIds = list.todos
+      .filter((todo) => todo.completed)
+      .map((todo) => todo._id);
+
+      //remove the completed todos
+      list.todos = list.todos.filter((todo) => !todo.completed)
+
+    await list.save();
+
+    res.status(200).json({ message: "Completed todos cleared successfully" });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
