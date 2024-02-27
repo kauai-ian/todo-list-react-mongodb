@@ -8,9 +8,6 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 import cors from "cors";
 const connectUrl = process.env.DB_URI;
-// console.log(process.env.DB_URI);
-// import TodoModel from "./model/Todo_Model.js";
-
 import List from "./model/Projects_Model.js";
 import Todo from "./model/Todo_Model.js";
 
@@ -32,28 +29,7 @@ async function main() {
   }
 }
 
-// create new list
-// const _listModel = new List({
-//   title: 'inbox',
-//   activeListId: '1',
-// list_id: 1,
-// })
-
-// save the model
-// await _listModel.save()
-
-// delete many
-// const deleteAllLists = await List.deleteMany({})
-
-// find a single list
-// const firstList = await List.findOne({})
-// console.log(firstList)
-
-// find all
-// const allLists = await List.find({})
-// console.log(allLists)
-
-//routes
+//route handlers
 // get all lists
 app.get("/lists", async (req, res) => {
   try {
