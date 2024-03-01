@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import Todo from "./Todo_Model.js";
 
 const { Schema, model } = mongoose;
 
@@ -9,7 +8,12 @@ const ListSchema = new Schema({
     required: true,
   },
 
-  todos: [Todo.schema],
+  todos: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Todo",
+    },
+  ],
 });
 
 const List = model("List", ListSchema);

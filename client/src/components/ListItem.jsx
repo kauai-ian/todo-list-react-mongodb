@@ -1,5 +1,6 @@
 import trashIcon from "../assets/trash.png";
 import { PropTypes } from "prop-types";
+import capFrstLtr from "../helpers/CapFirstLtr";
 
 export function ListItem({
   title,
@@ -8,14 +9,6 @@ export function ListItem({
   switchLists,
   activeListId,
 }) {
-  const capFrstLtr = (str) => {
-    return str.charAt(0).toUpperCase() + str.slice(1);
-  };
-
-  const handleDeleteList = () => {
-    deleteList(_id); // convert to string before passing it to deleteList
-  };
-
   const isActive = activeListId === _id;
 
   return (
@@ -24,7 +17,7 @@ export function ListItem({
         {capFrstLtr(title)}
       </p>
 
-      <button onClick={handleDeleteList} className="btn btn-del">
+      <button onClick={() => deleteList(_id)} className="btn btn-del">
         <img src={trashIcon} alt="remove button" className="trash" />
       </button>
     </li>

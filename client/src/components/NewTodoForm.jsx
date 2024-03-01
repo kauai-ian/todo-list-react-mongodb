@@ -1,16 +1,15 @@
 import { useState } from "react";
-import { v4 as uuid } from "uuid";
 import PropTypes from "prop-types";
 
 export function TodoForm({ addTodo, activeList }) {
   const activeListData = activeList ? activeList : null; // get list if its there
-  const [newItem, setNewItem] = useState(""); // hook that accepts default value of empty string. 2 values. item and function.
+  const [newItem, setNewItem] = useState("");
   const handleSubmit = (e) => {
     if (newItem === "") return;
     e.preventDefault();
 
     if (activeListData) {
-      addTodo({ id: uuid(), title: newItem, completed: false });
+      addTodo(newItem);
     }
     setNewItem("");
   };

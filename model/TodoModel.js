@@ -11,9 +11,6 @@ const TodoSchema = new Schema({
     type: Boolean,
     default: false,
   },
-  todo_id: {
-    type: String,
-  },
 });
 
 const Todo = model("Todo", TodoSchema);

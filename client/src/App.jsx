@@ -6,7 +6,6 @@ import { TodoList } from "./components/TodoList";
 import { List } from "./components/List";
 import { ListForm } from "./components/NewListForm";
 import axios from "axios";
-import { v4 as uuidv4 } from "uuid";
 
 const API_Lists = "http://localhost:3000/lists";
 
@@ -63,28 +62,19 @@ function App() {
     setActiveListId(_id);
   };
 
-  const addTodo = async (newTodo) => {
+  const addTodo = async (title) => {
     try {
-      const { title } = newTodo;
-      const _id = uuidv4();
-      const todoData = { title, _id }; // Construct the todo data object
-      console.log(todoData);
-      console.log("Type of activeListId:", typeof activeListId);
-      console.log(activeListId);
-
       const res = await axios.post(
         `${API_Lists}/${activeListId}/todos`,
-        todoData
+        {title: title}
       );
-
-      console.log(res.data);
 
       setLists((prevLists) => {
         return prevLists.map((list) => {
           return list._id === activeListId
             ? {
                 ...list,
-                todos: [...list.todos, res.data], // the response from server is the updated list
+                todos: [...list.todos, res.data.todo],
               }
             : list;
         });
@@ -94,7 +84,7 @@ function App() {
     }
   };
 
-  // needs work
+  
   const toggleCompleted = async (todo_id, completed) => {
     try {
       await axios.put(`${API_Lists}/${activeListId}/todos/${todo_id}`, {

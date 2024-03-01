@@ -1,5 +1,6 @@
 import trashIcon from '../assets/trash.png' 
 import PropTypes from "prop-types";
+import capFrstLtr from '../helpers/CapFirstLtr';
 
 export function TodoItem({
   title,
@@ -8,9 +9,6 @@ export function TodoItem({
   toggleCompleted,
   deleteTodo,
 }) { 
-  const capFrstLtr = (str) => {
-    return str.charAt(0).toUpperCase() + str.slice(1)
-  }
   
   return (
     <li className={` todo-item ${completed ? "checked" : ""}`}>
@@ -18,12 +16,12 @@ export function TodoItem({
         <input
           type="checkbox"
           checked={completed}
-          onChange={(e) => toggleCompleted(_id, e.target.checked)} // need to call as a function to run
+          onChange={(e) => toggleCompleted(_id, e.target.checked)} 
         />
         {capFrstLtr(title)}
       </label>{" "}
       <button
-        onClick={() => deleteTodo(_id)} // need to call as a function  to run
+        onClick={() => deleteTodo(_id)} 
         className="btn btn-del"
       >
         <img src={trashIcon} alt="remove button" className='trash' />
