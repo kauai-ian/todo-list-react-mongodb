@@ -31,7 +31,7 @@ async function main() {
 // get all lists
 app.get("/lists", async (req, res) => {
   try {
-    const lists = await List.find();
+    const lists = await List.find().populate('todos');
     res.json(lists);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -70,11 +70,9 @@ app.delete("/lists/:_id", async (req, res) => {
 //add todo
 app.post("/lists/:_id/todos", async (req, res) => {
   try {
-    console.log(req.params);
     const listId = req.params._id;
     const { title } = req.body;
     console.log("List ID to be updated:", listId);
-    console.log(req.body);
     const newTodo = new Todo({ title });
     await newTodo.save();
 
@@ -85,9 +83,7 @@ app.post("/lists/:_id/todos", async (req, res) => {
     list.todos.push(newTodo._id);
     await list.save();
 
-    // list.todos.find((t) => t._id === newTodo._id);
     res.status(201).json({todo: newTodo});
-    console.log("success");
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -96,8 +92,6 @@ app.post("/lists/:_id/todos", async (req, res) => {
 // delete todo
 app.delete("/lists/:_id/todos/:todo_id", async (req, res) => {
   try {
-    console.log("Request Parameters:", req.params);
-
     const listId = req.params._id;
     const todoId = req.params.todo_id;
     console.log("List ID of item to be deleted:", listId);
@@ -108,7 +102,6 @@ app.delete("/lists/:_id/todos/:todo_id", async (req, res) => {
       return res.status(404).json({ message: "List not found" });
     }
     list.todos = list.todos.filter(todo => !todo.equals(todoId))
-    console.log(list.todos)
     await list.save();
 
     await Todo.findByIdAndDelete(todoId);
@@ -149,23 +142,16 @@ app.put("/lists/:list_id/todos/:todo_id", async (req, res) => {
 // clear completed
 app.delete("/lists/:list_id/todos/:todo_id", async (req, res) => {
   try {
-    console.log("Request Parameters:", req.params);
-
     const listId = req.params.list_id;
-    console.log("List ID of item to be deleted:", listId);
-
     const list = await List.findById(listId);
-    console.log("List:", list);
     if (!list) {
       return res.status(404).json({ message: "List not found" });
     }
 
-    // filter out completed todos and extract their ids
     const completedTodoIds = list.todos
       .filter((todo) => todo.completed)
       .map((todo) => todo._id);
 
-    //remove the completed todos
     list.todos = list.todos.filter((todo) => !todo.completed);
 
     await list.save();

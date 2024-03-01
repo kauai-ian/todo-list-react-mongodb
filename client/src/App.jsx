@@ -6,6 +6,7 @@ import { TodoList } from "./components/TodoList";
 import { List } from "./components/List";
 import { ListForm } from "./components/NewListForm";
 import axios from "axios";
+import { fetchLists } from "./helpers/fetchLists";
 
 const API_Lists = "http://localhost:3000/lists";
 
@@ -14,21 +15,16 @@ function App() {
   const [lists, setLists] = useState([]);
 
   useEffect(() => {
-    fetchLists();
+    const fetchData = async () => {
+      try {
+        const listsData = await fetchLists();
+        setLists(listsData);
+      } catch (error) {
+        console.error(error.message);
+      }
+    };
+    fetchData();
   }, []);
-
-  const fetchLists = async () => {
-    try {
-      const res = await axios.get(API_Lists, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      setLists(res.data);
-    } catch (error) {
-      console.error("Error fetching lists", error);
-    }
-  };
 
   const addList = async (listObject) => {
     const title = listObject.title;
@@ -64,10 +60,9 @@ function App() {
 
   const addTodo = async (title) => {
     try {
-      const res = await axios.post(
-        `${API_Lists}/${activeListId}/todos`,
-        {title: title}
-      );
+      const res = await axios.post(`${API_Lists}/${activeListId}/todos`, {
+        title: title,
+      });
 
       setLists((prevLists) => {
         return prevLists.map((list) => {
@@ -84,7 +79,6 @@ function App() {
     }
   };
 
-  
   const toggleCompleted = async (todo_id, completed) => {
     try {
       await axios.put(`${API_Lists}/${activeListId}/todos/${todo_id}`, {
@@ -169,7 +163,7 @@ function App() {
 
         <div className="todo-container">
           <TodoForm addTodo={addTodo} activeList={activeList} />
-          <h2>Todo Items </h2>
+          <h2>Todo Items: {activeList ? activeList.title : ""}</h2>
           <TodoList
             activeList={activeList}
             todos={activeList ? activeList.todos : []}
